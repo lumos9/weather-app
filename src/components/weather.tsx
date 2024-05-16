@@ -133,9 +133,7 @@ export default function Weather() {
             ) : (
                 weather ? (
                     <div className="flex flex-col justify-center items-center gap-5">
-                        {/* <div>{location?.ip}</div> */}
                         <div className="flex flex-col justify-center items-center gap-2">
-                            {/* <div>{weather.weather[0].main}</div> */}
                             <div className="text-8xl">{getWeatherEmoji(weather.weather[0].main)}</div>
                             {
                                 supportsFahrenheit(location?.country_name) ? (
@@ -154,7 +152,10 @@ export default function Weather() {
                             <div className="text-2xl font-normal">{location?.country_name}</div>
                         </div>
                         <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
-                        <div className="text-sm font-normal text-muted-foreground text-center">*Retrieved approx. location info from your public IP address</div>
+                        <div className="text-sm md:text-base font-normal text-muted-foreground text-center">
+                            <div>Retrieved approx. location info from your public IP address</div>
+                            <div>{location?.ip}</div>
+                        </div>
                     </div>
                 ) : (
                     <div className="flex justify-center items-center gap-4">
