@@ -83,6 +83,17 @@ export default function Weather() {
         return weatherEmojis[description.toLowerCase()] || "🌈";  // Default to rainbow if not found
     }
 
+    function supportsFahrenheit(country: any) {
+        const fahrenheitCountries = new Set([
+            'United States',
+            'Bahamas',
+            'Cayman Islands',
+            'Palau'
+            // Add more countries that use Fahrenheit
+        ]);
+        return fahrenheitCountries.has(country);
+    }
+
     const fetchLocation = async () => {
         setIsLoading(true);
         const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
@@ -126,19 +137,30 @@ export default function Weather() {
                         <div className="flex flex-col justify-center items-center gap-2">
                             {/* <div>{weather.weather[0].main}</div> */}
                             <div className="text-8xl">{getWeatherEmoji(weather.weather[0].main)}</div>
-                            <div className="flex flex-row">
-                                <div className="text-8xl text-pretty font-medium">{kelvinToCelsius(weather.main.temp).toFixed(1)}</div>
-                                <span className="superscript text-xl">°C</span>
-                                {/* <span className="superscript">°F</span> */}
-                            </div>
+                            {
+                                supportsFahrenheit(location?.country_name) ? (
+                                    <div className="flex flex-row">
+                                        <div className="text-8xl text-pretty font-medium">{kelvinToFahrenheit(weather.main.temp).toFixed(1)}</div>
+                                        <span className="superscript text-xl">°F</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-row">
+                                        <div className="text-8xl text-pretty font-medium">{kelvinToCelsius(weather.main.temp).toFixed(1)}</div>
+                                        <span className="superscript text-xl">°C</span>
+                                    </div>
+                                )
+                            }
                             <div className="text-2xl font-normal">{location?.city}, {location?.region} </div>
                             <div className="text-2xl font-normal">{location?.country_name}</div>
                         </div>
-                        <Button variant={"outline"} onClick={() => fetchLocation()}><RotateCw /></Button>
-                        {/* <div className="text-sm font-normal text-muted-foreground text-center">Information is based on your public IP Address</div> */}
+                        <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
+                        <div className="text-sm font-normal text-muted-foreground text-center">*Retrieved approx. location info from your public IP address</div>
                     </div>
                 ) : (
-                    <div className="flex justify-center items-center">No data</div>
+                    <div className="flex justify-center items-center gap-4">
+                        <div>No data</div>
+                        <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
+                    </div>
                 )
             )}
         </div>
