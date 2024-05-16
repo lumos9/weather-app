@@ -152,7 +152,7 @@ export default function Weather() {
                             <div className="text-2xl font-normal">{location?.country_name}</div>
                         </div>
                         <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
-                        <div className="text-sm md:text-base font-normal text-muted-foreground text-center">
+                        <div className="text-sm md:text-base font-normal text-muted-foreground text-center flex flex-col gap-2">
                             <div>Retrieved approx. location info from your public IP address</div>
                             <div>{location?.ip}</div>
                         </div>
