@@ -110,6 +110,8 @@ export default function Weather() {
                 if (weatherResponse.ok) {
                     setWeather(weather);
                 }
+            } else {
+                console.log("Unable to get geo-location data")
             }
         } else {
             console.error("API key not found");
