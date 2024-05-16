@@ -158,7 +158,7 @@ export default function Weather() {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex justify-center items-center gap-4">
+                    <div className="flex flex-col justify-center items-center gap-4">
                         <div>No data</div>
                         <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
                     </div>
