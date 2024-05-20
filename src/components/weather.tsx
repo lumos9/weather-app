@@ -2,7 +2,7 @@
 
 import { GeoLocation, getGeoLocation } from "@/lib/geo-location";
 import { kelvinToCelsius, kelvinToFahrenheit } from "@/lib/temperature";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { LoaderPinwheel, RotateCw } from "lucide-react";
 
@@ -111,7 +111,7 @@ export default function Weather() {
                     setWeather(weather);
                 }
             } else {
-                console.log("Unable to get geo-location data")
+                console.error("Unable to get geo-location data")
             }
         } else {
             console.error("API key not found");
@@ -130,42 +130,46 @@ export default function Weather() {
 
     return (
         <div className="flex justify-center items-center text-pretty font-medium">
-            {isLoading ? (
-                <LoaderPinwheel className="animate-spin size-10" color="#fec700" />
-            ) : (
-                weather ? (
-                    <div className="flex flex-col justify-center items-center gap-5">
-                        <div className="flex flex-col justify-center items-center gap-2">
-                            <div className="text-8xl">{getWeatherEmoji(weather.weather[0].main)}</div>
-                            {
-                                supportsFahrenheit(location?.country_name) ? (
-                                    <div className="flex flex-row">
-                                        <div className="text-8xl text-pretty font-medium">{kelvinToFahrenheit(weather.main.temp).toFixed(1)}</div>
-                                        <span className="superscript text-xl">°F</span>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-row">
-                                        <div className="text-8xl text-pretty font-medium">{kelvinToCelsius(weather.main.temp).toFixed(1)}</div>
-                                        <span className="superscript text-xl">°C</span>
-                                    </div>
-                                )
-                            }
-                            <div className="text-2xl font-normal">{location?.city}, {location?.region} </div>
-                            <div className="text-2xl font-normal">{location?.country_name}</div>
-                        </div>
-                        <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
-                        <div className="text-sm md:text-base font-normal text-muted-foreground text-center flex flex-col gap-2">
-                            <div>Retrieved approx. location info from your public IP address</div>
-                            <div>{location?.ip}</div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col justify-center items-center gap-4">
-                        <div>No data</div>
-                        <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
-                    </div>
-                )
-            )}
-        </div>
+            <Suspense fallback={<LoaderPinwheel className="animate-spin size-10" color="#fec700" />}>
+                {
+                    isLoading ? (
+                        <LoaderPinwheel className="animate-spin size-10" color="#fec700" />
+                    ) : (
+                        weather ? (
+                            <div className="flex flex-col justify-center items-center gap-5">
+                                <div className="flex flex-col justify-center items-center gap-2">
+                                    <div className="text-8xl">{getWeatherEmoji(weather.weather[0].main)}</div>
+                                    {
+                                        supportsFahrenheit(location?.country_name) ? (
+                                            <div className="flex flex-row">
+                                                <div className="text-8xl text-pretty font-medium">{kelvinToFahrenheit(weather.main.temp).toFixed(1)}</div>
+                                                <span className="superscript text-xl">°F</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-row">
+                                                <div className="text-8xl text-pretty font-medium">{kelvinToCelsius(weather.main.temp).toFixed(1)}</div>
+                                                <span className="superscript text-xl">°C</span>
+                                            </div>
+                                        )
+                                    }
+                                    <div className="text-2xl font-normal">{location?.city}, {location?.region} </div>
+                                    <div className="text-2xl font-normal">{location?.country_name}</div>
+                                </div>
+                                <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
+                                <div className="text-sm md:text-base font-normal text-muted-foreground text-center flex flex-col gap-2">
+                                    <div>Retrieved approx. location info from your public IP address</div>
+                                    <div>{location?.ip}</div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col justify-center items-center gap-4">
+                                <div>No data</div>
+                                <Button variant={"outline"} onClick={() => fetchLocation()} className="cursor-pointer"><RotateCw /></Button>
+                            </div>
+                        )
+                    )
+                }
+            </Suspense>
+        </div >
     );
 }
